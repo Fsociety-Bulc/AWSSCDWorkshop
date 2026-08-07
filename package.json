@@ -1,0 +1,20 @@
+{
+  "name": "devops-on-aws-community-day",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Slides and live demo for AWS Student Community Day Islamabad",
+  "license": "MIT",
+  "scripts": {
+    "qr": "node scripts/generate-qr.mjs",
+    "build:html": "node scripts/prepare-dist.mjs && marp slides/deck.md --no-stdin --theme slides/theme.css --html --allow-local-files --output dist/slides.html",
+    "build:pdf": "node scripts/prepare-dist.mjs && marp slides/deck.md --no-stdin --theme slides/theme.css --html --allow-local-files --pdf --output dist/devops-on-aws.pdf",
+    "build:pptx": "node scripts/prepare-dist.mjs && marp slides/deck.md --no-stdin --theme slides/theme.css --html --allow-local-files --pptx --output dist/devops-on-aws.pptx",
+    "build": "npm run qr && npm run build:html && npm run build:pdf && npm run build:pptx",
+    "preview": "marp slides/deck.md --no-stdin --theme slides/theme.css --html --allow-local-files --preview",
+    "clean": "node scripts/clean.mjs"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "4.5.0",
+    "qrcode": "1.5.4"
+  }
+}

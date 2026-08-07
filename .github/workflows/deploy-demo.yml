@@ -1,0 +1,67 @@
+name: Deploy live demo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "demo/**"
+      - ".github/workflows/deploy-demo.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: production-demo
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+  S3_BUCKET: ${{ vars.DEMO_BUCKET }}
+  DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+
+jobs:
+  deploy:
+    name: Validate and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Validate deployment configuration
+        env:
+          ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+        run: |
+          set -euo pipefail
+          test -n "$ROLE_ARN" || { echo "Missing AWS_ROLE_ARN repository variable"; exit 1; }
+          test -n "$S3_BUCKET" || { echo "Missing DEMO_BUCKET repository variable"; exit 1; }
+          test -n "$DISTRIBUTION_ID" || { echo "Missing CLOUDFRONT_DISTRIBUTION_ID repository variable"; exit 1; }
+          test -s demo/index.html
+          test -s demo/styles.css
+          test -s demo/app.js
+
+      - name: Request temporary AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: community-day-demo
+
+      - name: Sync website to private S3 bucket
+        run: aws s3 sync demo/ "s3://${S3_BUCKET}" --delete --cache-control "no-cache"
+
+      - name: Invalidate CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*"
+
+      - name: Publish deployment summary
+        run: |
+          {
+            echo "## Deployment complete"
+            echo ""
+            echo "- Commit: \`${GITHUB_SHA::7}\`"
+            echo "- Region: \`${AWS_REGION}\`"
+            echo "- Authentication: GitHub OIDC temporary credentials"
+          } >> "$GITHUB_STEP_SUMMARY"
