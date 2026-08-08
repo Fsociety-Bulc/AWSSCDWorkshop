@@ -30,19 +30,19 @@ Parameters:
     ConstraintDescription: Use only letters, numbers, dot, underscore, and hyphen.
   GitHubRepo:
     Type: String
-    Default: Artificial-intelligence-BULC-Lab
+    Default: AWSSCDWorkshop
     Description: GitHub repository containing demo/ and buildspec.yml.
     AllowedPattern: "[A-Za-z0-9_.-]+"
     ConstraintDescription: Use only letters, numbers, dot, underscore, and hyphen.
   GitHubBranch:
     Type: String
-    Default: feat/aws-devops-beginner-codepipeline
-    Description: A push to this branch starts the pipeline.
+    Default: main
+    Description: A pull-request merge or push to this branch starts the pipeline.
     AllowedPattern: "[A-Za-z0-9_./-]+"
     ConstraintDescription: Enter a valid Git branch name.
   ConnectionName:
     Type: String
-    Default: student-devops-github
+    Default: awsscdworkshop-github
     Description: Unique name for the GitHub connection in this AWS account.
     AllowedPattern: "[A-Za-z0-9-]+"
     MinLength: 1
@@ -96,7 +96,7 @@ Resources:
         RestrictPublicBuckets: true
       Tags:
         - Key: Purpose
-          Value: student-devops-pipeline-artifacts
+          Value: aws-scd-workshop-pipeline-artifacts
 
   DemoOriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
@@ -370,7 +370,7 @@ Resources:
               RunOrder: 1
       Tags:
         - Key: Purpose
-          Value: student-devops-pipeline
+          Value: aws-scd-workshop-pipeline
 
 Outputs:
   WebsiteUrl:

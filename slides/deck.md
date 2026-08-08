@@ -285,5 +285,5 @@ html: true
 
 <img class="qr" src="assets/repo-qr.svg" alt="QR code for session repository" />
 
-<p class="center small"><strong>Fsociety-Bulc / Artificial-intelligence-BULC-Lab<br>beginner CodePipeline branch</strong></p>
+<p class="center small"><strong>Fsociety-Bulc / AWSSCDWorkshop<br>merge a PR, watch it deploy</strong></p>
 <p class="center tiny muted">Deploy link, cleanup, and rehearsal steps are in the repository.</p>

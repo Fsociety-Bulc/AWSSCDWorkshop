@@ -26,7 +26,7 @@ The README CloudShell command includes five defaults:
 
 If you move the kit, update the download URL and parameter values in that command. CloudFormation quick-create does **not** accept a raw GitHub URL as `templateURL`; a literal Launch Stack button requires publishing the template to an S3 HTTPS URL first.
 
-`ConnectionName` must be unique in the selected AWS account. Change it if that account already contains `student-devops-github`.
+`ConnectionName` must be unique in the selected AWS account. Change it if that account already contains `awsscdworkshop-github`.
 
 ## Live website values
 

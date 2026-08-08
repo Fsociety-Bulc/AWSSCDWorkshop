@@ -1,8 +1,8 @@
 {
-  "name": "devops-on-aws-community-day",
+  "name": "aws-scd-workshop",
   "version": "1.0.0",
   "private": true,
-  "description": "Beginner DevOps and Infrastructure as Code session with AWS CodePipeline",
+  "description": "AWS Student Community Day PR-to-CodePipeline workshop",
   "license": "MIT",
   "scripts": {
     "qr": "node scripts/generate-qr.mjs",

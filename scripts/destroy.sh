@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-STACK_NAME="${STACK_NAME:-student-devops-pipeline}"
+STACK_NAME="${STACK_NAME:-aws-scd-workshop}"
 REGION="${AWS_REGION:-us-east-1}"
 
 command -v aws >/dev/null || { echo "AWS CLI is required."; exit 1; }

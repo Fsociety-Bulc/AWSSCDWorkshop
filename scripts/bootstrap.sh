@@ -2,11 +2,11 @@
 set -euo pipefail
 
 OWNER="${1:-Fsociety-Bulc}"
-REPO="${2:-Artificial-intelligence-BULC-Lab}"
-BRANCH="${3:-feat/aws-devops-beginner-codepipeline}"
-STACK_NAME="${STACK_NAME:-student-devops-pipeline}"
+REPO="${2:-AWSSCDWorkshop}"
+BRANCH="${3:-main}"
+STACK_NAME="${STACK_NAME:-aws-scd-workshop}"
 REGION="${AWS_REGION:-us-east-1}"
-CONNECTION_NAME="${CONNECTION_NAME:-student-devops-github}"
+CONNECTION_NAME="${CONNECTION_NAME:-awsscdworkshop-github}"
 
 command -v aws >/dev/null || { echo "AWS CLI is required."; exit 1; }
 aws sts get-caller-identity >/dev/null

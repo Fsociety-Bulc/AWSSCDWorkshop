@@ -15,7 +15,7 @@
 
 - [ ] Restore `demo/app.js` to v1 values and push it through the pipeline.
 - [ ] Confirm the CloudFront page loads from a phone using mobile data.
-- [ ] Push a harmless commit and confirm CodePipeline starts automatically.
+- [ ] Merge a harmless test PR into `main` and confirm CodePipeline starts automatically.
 - [ ] Save screenshots of v1, the Git change, each running pipeline stage, the green pipeline, and v2.
 - [ ] Bookmark `WebsiteUrl`, `PipelineConsoleUrl`, `ConnectionSetupUrl`, and CloudFormation Outputs.
 - [ ] Clone or download the repository locally.
