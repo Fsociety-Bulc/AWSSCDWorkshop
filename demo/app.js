@@ -1,7 +1,7 @@
 const release = {
-  version: "v1.0",
-  message: "Ship with confidence.",
-  accent: "#ff9900"
+  version: "v2.0",
+  message: "My first automated AWS deployment!",
+  accent: "#38bdf8"
 };
 
 document.documentElement.style.setProperty("--accent", release.accent);
