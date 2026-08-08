@@ -3,34 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Purrfect Care — a modern, feline-only veterinary clinic" />
-  <title>Purrfect Care Cat Clinic</title>
+  <meta name="description" content="Bark & Bloom — joyful modern veterinary care for dogs" />
+  <title>Bark & Bloom Dog Clinic</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="app.js" defer></script>
 </head>
 <body>
-  <div class="glow one"></div><div class="glow two"></div>
-  <header>
-    <a class="logo" href="#"><span>🐾</span>Purrfect<span>Care</span></a>
-    <nav><a href="#services">Services</a><a href="#team">Why us</a><button data-book>Book a visit</button></nav>
-  </header>
+  <header><a class="logo" href="#"><span>BB</span><b>Bark & Bloom</b></a><nav><a href="#care">Our care</a><a href="#story">Why us</a><button data-book>Book a checkup</button></nav></header>
   <main>
     <section class="hero">
-      <div class="copy">
-        <p class="eyebrow"><i></i> FELINE-ONLY VETERINARY CARE</p>
-        <h1>Because cats deserve <em>main-character</em> care.</h1>
-        <p class="lead">Calm rooms, gentle hands, zero barking. Modern medicine designed around your cat's comfort.</p>
-        <div class="actions"><button class="primary" data-book>Book an appointment →</button><a href="tel:+920000000000">☎ Emergency line</a></div>
-        <div class="trust"><div><b>4.9★</b><span>800+ happy humans</span></div><div><b>12+</b><span>feline specialists</span></div><div><b>7 days</b><span>open every week</span></div></div>
-      </div>
-      <div class="portrait"><div class="orbit"></div><div class="cat">🐈</div><span class="tag top">✓ Fear-free certified</span><span class="tag bottom">💜 Cats only. Always.</span></div>
+      <div class="copy"><p class="eyebrow">THE GOOD-DOG HEALTH CLUB <span>● OPEN</span></p><h1>Big care for your <em>best friend.</em></h1><p class="lead">Science-led veterinary care with more treats, longer walks, and a team that remembers every tail.</p><div class="actions"><button class="primary" data-book>Plan their visit <b>↗</b></button><a href="tel:+920000000000"><i>☎</i> 24/7 urgent care</a></div><div class="rating"><div class="faces">🐶 🐕 🐩</div><p><b>4.9 / 5</b><br><span>Loved by 1,200+ pet parents</span></p></div></div>
+      <div class="visual"><div class="sun"></div><div class="dog">🐕‍🦺</div><span class="bubble b1">🦴 Treat approved</span><span class="bubble b2">✓ Same-day visits</span><div class="scribble">GOOD<br>DOGS<br>ONLY*</div><small>*all dogs are good dogs</small></div>
     </section>
-    <section id="services" class="services">
-      <div class="section-head"><div><p class="eyebrow">WHAT WE DO</p><h2>Care for every one<br>of their nine lives.</h2></div><p>Preventive, diagnostic, dental and urgent care under one peaceful roof.</p></div>
-      <div class="cards"><article><span>🩺</span><h3>Wellness</h3><p>Head-to-tail exams and plans built for every life stage.</p></article><article><span>🦷</span><h3>Dental</h3><p>Low-stress cleaning, digital imaging and pain relief.</p></article><article><span>🔬</span><h3>Diagnostics</h3><p>In-house lab and imaging for answers without the wait.</p></article></div>
-    </section>
+    <section class="ticker"><span>WELLNESS</span>✦<span>VACCINES</span>✦<span>DENTAL</span>✦<span>SURGERY</span>✦<span>GROOMING</span>✦<span>URGENT CARE</span></section>
+    <section id="care" class="care"><div class="intro"><p class="eyebrow">CARE THAT COVERS IT</p><h2>Nose to tail.<br>Puppy to senior.</h2><p>One friendly team for routine days, scary days, and every zoomie in between.</p></div><div class="grid"><article><b>01</b><span>🩺</span><h3>Everyday wellness</h3><p>Exams, vaccines and nutrition plans that keep adventures on schedule.</p></article><article><b>02</b><span>⚡</span><h3>Same-day urgent</h3><p>Quick answers, diagnostics and relief when something feels off.</p></article><article><b>03</b><span>🦷</span><h3>Dental & surgery</h3><p>Modern monitoring, pain control and recovery updates you can trust.</p></article></div></section>
   </main>
-  <div id="toast" role="status">Appointment request started — we’ll call you shortly! 🐾</div>
-  <footer><span>© <b id="year"></b> Purrfect Care</span><span id="status">Checking today's hours…</span></footer>
+  <div id="modal" aria-hidden="true"><div><button id="close" aria-label="Close">×</button><span>🐾</span><h2>Let’s get that tail wagging.</h2><p>Call us now or request your appointment online.</p><a href="tel:+920000000000">Call the clinic →</a></div></div>
+  <footer><a class="logo" href="#"><span>BB</span><b>Bark & Bloom</b></a><p id="status">Loading clinic hours…</p><p>© <b id="year"></b> Good care. Great dogs.</p></footer>
 </body>
 </html>
