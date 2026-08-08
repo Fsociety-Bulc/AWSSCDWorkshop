@@ -1,38 +1,36 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Beginner DevOps live demo using AWS CodePipeline" />
-    <title>From Code to Cloud</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script src="app.js" defer></script>
-  </head>
-  <body>
-    <main class="shell">
-      <nav aria-label="Demo status">
-        <span class="brand">AWS STUDENT COMMUNITY DAY</span>
-        <span id="status" class="status">LOADING</span>
-      </nav>
-
-      <section class="hero">
-        <p class="eyebrow">ISLAMABAD / LIVE DEPLOYMENT</p>
-        <h1 id="message">Ship with confidence.</h1>
-        <p class="subhead">GitHub push. AWS CodePipeline. Live website. No server setup.</p>
-        <div class="release">
-          <span>RELEASE</span>
-          <strong id="version">v1.0</strong>
-        </div>
-      </section>
-
-      <section class="pipeline" aria-label="Deployment pipeline">
-        <span>SOURCE</span><i></i><span>CHECK</span><i></i><span>DEPLOY</span><i></i><span>LIVE</span>
-      </section>
-
-      <footer>
-        <span>Built live with CloudFormation + CodePipeline</span>
-        <span id="timestamp">Waiting for pipeline</span>
-      </footer>
-    </main>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Purrfect Care — a modern, feline-only veterinary clinic" />
+  <title>Purrfect Care Cat Clinic</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="glow one"></div><div class="glow two"></div>
+  <header>
+    <a class="logo" href="#"><span>🐾</span>Purrfect<span>Care</span></a>
+    <nav><a href="#services">Services</a><a href="#team">Why us</a><button data-book>Book a visit</button></nav>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="copy">
+        <p class="eyebrow"><i></i> FELINE-ONLY VETERINARY CARE</p>
+        <h1>Because cats deserve <em>main-character</em> care.</h1>
+        <p class="lead">Calm rooms, gentle hands, zero barking. Modern medicine designed around your cat's comfort.</p>
+        <div class="actions"><button class="primary" data-book>Book an appointment →</button><a href="tel:+920000000000">☎ Emergency line</a></div>
+        <div class="trust"><div><b>4.9★</b><span>800+ happy humans</span></div><div><b>12+</b><span>feline specialists</span></div><div><b>7 days</b><span>open every week</span></div></div>
+      </div>
+      <div class="portrait"><div class="orbit"></div><div class="cat">🐈</div><span class="tag top">✓ Fear-free certified</span><span class="tag bottom">💜 Cats only. Always.</span></div>
+    </section>
+    <section id="services" class="services">
+      <div class="section-head"><div><p class="eyebrow">WHAT WE DO</p><h2>Care for every one<br>of their nine lives.</h2></div><p>Preventive, diagnostic, dental and urgent care under one peaceful roof.</p></div>
+      <div class="cards"><article><span>🩺</span><h3>Wellness</h3><p>Head-to-tail exams and plans built for every life stage.</p></article><article><span>🦷</span><h3>Dental</h3><p>Low-stress cleaning, digital imaging and pain relief.</p></article><article><span>🔬</span><h3>Diagnostics</h3><p>In-house lab and imaging for answers without the wait.</p></article></div>
+    </section>
+  </main>
+  <div id="toast" role="status">Appointment request started — we’ll call you shortly! 🐾</div>
+  <footer><span>© <b id="year"></b> Purrfect Care</span><span id="status">Checking today's hours…</span></footer>
+</body>
 </html>
