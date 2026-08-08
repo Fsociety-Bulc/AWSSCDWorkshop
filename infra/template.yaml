@@ -314,9 +314,17 @@ Resources:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       RoleArn: !GetAtt PipelineRole.Arn
-      PipelineType: V1
+      PipelineType: V2
       ExecutionMode: SUPERSEDED
       RestartExecutionOnUpdate: false
+      Triggers:
+        - ProviderType: CodeStarSourceConnection
+          GitConfiguration:
+            SourceActionName: GitHub_Source
+            Push:
+              - Branches:
+                  Includes:
+                    - !Ref GitHubBranch
       ArtifactStore:
         Type: S3
         Location: !Ref ArtifactBucket
