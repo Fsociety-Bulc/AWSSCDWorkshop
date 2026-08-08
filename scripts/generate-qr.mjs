@@ -2,7 +2,7 @@ import { mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import QRCode from "qrcode";
 
-const defaultUrl = "https://github.com/FarhanAshrafDev/devops-on-aws-community-day";
+const defaultUrl = "https://github.com/Fsociety-Bulc/Artificial-intelligence-BULC-Lab/tree/feat/aws-devops-beginner-codepipeline";
 const url = process.env.REPO_URL || defaultUrl;
 const assetDirectory = new URL("../slides/assets/", import.meta.url);
 const outputFile = fileURLToPath(new URL("repo-qr.svg", assetDirectory));

@@ -2,7 +2,7 @@
   "name": "devops-on-aws-community-day",
   "version": "1.0.0",
   "private": true,
-  "description": "Slides and live demo for AWS Student Community Day Islamabad",
+  "description": "Beginner DevOps and Infrastructure as Code session with AWS CodePipeline",
   "license": "MIT",
   "scripts": {
     "qr": "node scripts/generate-qr.mjs",

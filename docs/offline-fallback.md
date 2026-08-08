@@ -4,23 +4,28 @@ A live demo is a story with evidence. If the network fails, preserve the story a
 
 ## Capture these assets
 
-Store them locally under `fallback/` before the event:
+Store sanitized copies locally under `fallback/` before the event:
 
-1. `01-site-v1.png` — initial CloudFront website
-2. `02-code-change.png` — edited `release` object
-3. `03-workflow-running.png` — GitHub Actions stages
-4. `04-oidc-step.png` — temporary credential step
-5. `05-workflow-success.png` — green run and summary
-6. `06-site-v2.png` — deployed website
-7. `demo-recording.mp4` — 60–90 second end-to-end recording
+1. `01-site-v1.png` — initial CloudFront webpage
+2. `02-code-change.png` — edited `release` object in `demo/app.js`
+3. `03-codepipeline-source.png` — Source stage processing the GitHub commit
+4. `04-codebuild-check.png` — successful file and JavaScript checks
+5. `05-codepipeline-deploy.png` — green Source, Check, and Deploy stages
+6. `06-site-v2.png` — deployed blue-accent v2 webpage
+7. `07-cloudformation-resources.png` — sanitized stack resource list
+8. `demo-recording.mp4` — 60–90 second end-to-end recording
 
-The `fallback/` directory is intentionally not populated because it should contain screenshots from the speaker’s real repository and AWS account. Avoid capturing account IDs, email addresses, tokens, unrelated repositories, or browser notifications.
+The repository does not contain real captures because they should come from the speaker’s AWS account and authorized GitHub repository. Hide account IDs, email addresses, connection ARNs, tokens, unrelated repositories, and browser notifications.
 
 ## Presentation sequence
 
-1. Say plainly: “The venue network is not cooperating, so I’ll use the exact run I recorded during rehearsal.”
-2. Play the short recording or advance through the six screenshots.
-3. Narrate the same stages: commit, validation, OIDC, S3 sync, CloudFront invalidation, reveal.
-4. Return to the “What just happened?” slide.
+1. Say: “The venue network is not cooperating, so I’ll use the exact run recorded during rehearsal.”
+2. Show v1 and the three-value Git change.
+3. Show Source receiving the commit.
+4. Show CodeBuild checks and the packaged website artifact.
+5. Show the green Deploy stage.
+6. Reveal v2.
+7. Show the CloudFormation resource list and close the IaC story.
+8. Return to the “What just happened?” slide.
 
-Do not spend more than 45 seconds troubleshooting on stage. Reliability includes having a rollback path for the presentation itself.
+Narrate the same path: push, source, check, deploy, user result, feedback. Do not spend more than 45 seconds troubleshooting on stage. Reliability includes a fallback path for the presentation itself.

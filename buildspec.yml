@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo "Checking the three website files..."
+      - test -s demo/index.html
+      - test -s demo/styles.css
+      - test -s demo/app.js
+      - grep -qi '<!doctype html>' demo/index.html
+      - node --check demo/app.js
+      - echo "Checks passed. Packaging demo/ as the website artifact."
+
+artifacts:
+  base-directory: demo
+  files:
+    - "**/*"

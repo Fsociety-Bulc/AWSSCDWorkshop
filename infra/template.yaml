@@ -1,30 +1,55 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Private S3 and CloudFront demo site with a least-privilege GitHub Actions OIDC deployment role.
+Description: Beginner DevOps demo - GitHub push to CodePipeline, CodeBuild, private S3, and CloudFront.
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: GitHub source
+        Parameters:
+          - GitHubOwner
+          - GitHubRepo
+          - GitHubBranch
+          - ConnectionName
+    ParameterLabels:
+      GitHubOwner:
+        default: GitHub owner or organization
+      GitHubRepo:
+        default: Repository name
+      GitHubBranch:
+        default: Branch to deploy
+      ConnectionName:
+        default: AWS CodeConnections name
 
 Parameters:
   GitHubOwner:
     Type: String
-    Description: GitHub organization or username.
+    Default: Fsociety-Bulc
+    Description: GitHub organization or username that owns the repository.
     AllowedPattern: "[A-Za-z0-9_.-]+"
+    ConstraintDescription: Use only letters, numbers, dot, underscore, and hyphen.
   GitHubRepo:
     Type: String
-    Description: GitHub repository name.
+    Default: Artificial-intelligence-BULC-Lab
+    Description: GitHub repository containing demo/ and buildspec.yml.
     AllowedPattern: "[A-Za-z0-9_.-]+"
+    ConstraintDescription: Use only letters, numbers, dot, underscore, and hyphen.
   GitHubBranch:
     Type: String
-    Default: main
-    Description: Branch permitted to deploy.
+    Default: feat/aws-devops-beginner-codepipeline
+    Description: A push to this branch starts the pipeline.
     AllowedPattern: "[A-Za-z0-9_./-]+"
-  ExistingGitHubOidcProviderArn:
+    ConstraintDescription: Enter a valid Git branch name.
+  ConnectionName:
     Type: String
-    Default: ""
-    Description: Existing token.actions.githubusercontent.com provider ARN, or leave blank to create it.
-
-Conditions:
-  CreateGitHubOidcProvider: !Equals [!Ref ExistingGitHubOidcProviderArn, ""]
+    Default: student-devops-github
+    Description: Unique name for the GitHub connection in this AWS account.
+    AllowedPattern: "[A-Za-z0-9-]+"
+    MinLength: 1
+    MaxLength: 32
 
 Resources:
-  DemoBucket:
+  WebsiteBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
     UpdateReplacePolicy: Delete
@@ -33,6 +58,9 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -42,46 +70,94 @@ Resources:
         Status: Enabled
       Tags:
         - Key: Purpose
-          Value: aws-student-community-day-demo
+          Value: student-devops-website
+
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldPipelineArtifacts
+            Status: Enabled
+            ExpirationInDays: 30
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Purpose
+          Value: student-devops-pipeline-artifacts
 
   DemoOriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
       OriginAccessControlConfig:
         Name: !Sub "${AWS::StackName}-oac"
-        Description: Signed CloudFront access to the private demo bucket.
+        Description: Signed CloudFront access to the private website bucket.
         OriginAccessControlOriginType: s3
         SigningBehavior: always
         SigningProtocol: sigv4
+
+  DemoNoCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub "${AWS::StackName}-demo-no-cache"
+        Comment: Disable caching so the live demo changes immediately after deployment.
+        DefaultTTL: 0
+        MaxTTL: 0
+        MinTTL: 0
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
 
   DemoDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
-        Comment: !Sub "${AWS::StackName} live demo"
+        Comment: !Sub "${AWS::StackName} student DevOps demo"
         DefaultCacheBehavior:
           AllowedMethods: [GET, HEAD, OPTIONS]
           CachedMethods: [GET, HEAD, OPTIONS]
-          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          CachePolicyId: !Ref DemoNoCachePolicy
           Compress: true
-          TargetOriginId: demo-s3-origin
+          TargetOriginId: website-s3-origin
           ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: true
         HttpVersion: http2and3
         IPV6Enabled: true
         Origins:
-          - DomainName: !GetAtt DemoBucket.RegionalDomainName
-            Id: demo-s3-origin
+          - DomainName: !GetAtt WebsiteBucket.RegionalDomainName
+            Id: website-s3-origin
             OriginAccessControlId: !GetAtt DemoOriginAccessControl.Id
             S3OriginConfig:
               OriginAccessIdentity: ""
         PriceClass: PriceClass_100
+      Tags:
+        - Key: Purpose
+          Value: student-devops-website
 
-  DemoBucketPolicy:
+  WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref DemoBucket
+      Bucket: !Ref WebsiteBucket
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -90,80 +166,231 @@ Resources:
             Principal:
               Service: cloudfront.amazonaws.com
             Action: s3:GetObject
-            Resource: !Sub "${DemoBucket.Arn}/*"
+            Resource: !Sub "${WebsiteBucket.Arn}/*"
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DemoDistribution}"
 
-  GitHubOidcProvider:
-    Type: AWS::IAM::OIDCProvider
-    Condition: CreateGitHubOidcProvider
+  GitHubConnection:
+    Type: AWS::CodeConnections::Connection
     Properties:
-      Url: https://token.actions.githubusercontent.com
-      ClientIdList:
-        - sts.amazonaws.com
+      ConnectionName: !Ref ConnectionName
+      ProviderType: GitHub
       Tags:
         - Key: Purpose
-          Value: github-actions-oidc
+          Value: student-devops-source
 
-  GitHubDeploymentRole:
+  BuildLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+    Properties:
+      LogGroupName: !Sub "/aws/codebuild/${AWS::StackName}-website-check"
+      RetentionInDays: 7
+
+  CodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
-      Description: !Sub "Deploy ${GitHubOwner}/${GitHubRepo} demo site from GitHub Actions."
-      MaxSessionDuration: 3600
+      Description: Lets CodeBuild read pipeline input, write output, and publish build logs.
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
-              Federated: !If
-                - CreateGitHubOidcProvider
-                - !Ref GitHubOidcProvider
-                - !Ref ExistingGitHubOidcProviderArn
-            Action: sts:AssumeRoleWithWebIdentity
-            Condition:
-              StringEquals:
-                token.actions.githubusercontent.com:aud: sts.amazonaws.com
-                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOwner}/${GitHubRepo}:ref:refs/heads/${GitHubBranch}"
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
       Policies:
-        - PolicyName: DeployOnlyThisDemo
+        - PolicyName: CheckAndPackageWebsite
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-              - Sid: ListDemoBucket
-                Effect: Allow
-                Action: s3:ListBucket
-                Resource: !GetAtt DemoBucket.Arn
-              - Sid: UpdateDemoObjects
+              - Sid: PipelineArtifactBucket
                 Effect: Allow
                 Action:
-                  - s3:DeleteObject
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+                  - s3:GetBucketVersioning
+                  - s3:ListBucket
+                Resource: !GetAtt ArtifactBucket.Arn
+              - Sid: PipelineArtifactObjects
+                Effect: Allow
+                Action:
                   - s3:GetObject
+                  - s3:GetObjectVersion
                   - s3:PutObject
-                Resource: !Sub "${DemoBucket.Arn}/*"
-              - Sid: InvalidateDemoDistribution
+                Resource: !Sub "${ArtifactBucket.Arn}/*"
+              - Sid: BuildLogs
                 Effect: Allow
                 Action:
-                  - cloudfront:CreateInvalidation
-                  - cloudfront:GetInvalidation
-                Resource: !Sub "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DemoDistribution}"
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !GetAtt BuildLogGroup.Arn
+
+  WebsiteCheckProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Description: Checks and packages the simple static website.
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      TimeoutInMinutes: 5
+      QueuedTimeoutInMinutes: 10
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:7.0
+        Type: LINUX_CONTAINER
+        PrivilegedMode: false
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: !Ref BuildLogGroup
+          Status: ENABLED
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yml
       Tags:
         - Key: Purpose
-          Value: aws-student-community-day-demo
+          Value: student-devops-check
+
+  PipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Lets CodePipeline read GitHub, run CodeBuild, and deploy only this website.
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: RunStudentWebsitePipeline
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: UseOnlyThisGitHubConnection
+                Effect: Allow
+                Action:
+                  - codeconnections:UseConnection
+                  - codestar-connections:UseConnection
+                Resource: !GetAtt GitHubConnection.ConnectionArn
+              - Sid: PipelineArtifactBucket
+                Effect: Allow
+                Action:
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+                  - s3:GetBucketVersioning
+                  - s3:ListBucket
+                Resource: !GetAtt ArtifactBucket.Arn
+              - Sid: PipelineArtifactObjects
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                Resource: !Sub "${ArtifactBucket.Arn}/*"
+              - Sid: RunOnlyThisBuild
+                Effect: Allow
+                Action:
+                  - codebuild:BatchGetBuilds
+                  - codebuild:StartBuild
+                Resource: !GetAtt WebsiteCheckProject.Arn
+              - Sid: WebsiteBucketMetadata
+                Effect: Allow
+                Action:
+                  - s3:GetBucketAcl
+                  - s3:GetBucketLocation
+                  - s3:GetBucketVersioning
+                  - s3:ListBucket
+                Resource: !GetAtt WebsiteBucket.Arn
+              - Sid: DeployWebsiteObjects
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:PutObjectAcl
+                  - s3:PutObjectVersionAcl
+                Resource: !Sub "${WebsiteBucket.Arn}/*"
+
+  WebsitePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      RoleArn: !GetAtt PipelineRole.Arn
+      PipelineType: V1
+      ExecutionMode: SUPERSEDED
+      RestartExecutionOnUpdate: false
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: GitHub_Source
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeStarSourceConnection
+                Version: "1"
+              Configuration:
+                BranchName: !Ref GitHubBranch
+                ConnectionArn: !GetAtt GitHubConnection.ConnectionArn
+                DetectChanges: "true"
+                FullRepositoryId: !Sub "${GitHubOwner}/${GitHubRepo}"
+                OutputArtifactFormat: CODE_ZIP
+              OutputArtifacts:
+                - Name: SourceArtifact
+              RunOrder: 1
+        - Name: Check
+          Actions:
+            - Name: Check_And_Package
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref WebsiteCheckProject
+              InputArtifacts:
+                - Name: SourceArtifact
+              OutputArtifacts:
+                - Name: WebsiteArtifact
+              RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: Deploy_To_Private_S3
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Provider: S3
+                Version: "1"
+              Configuration:
+                BucketName: !Ref WebsiteBucket
+                CacheControl: "no-cache, no-store, must-revalidate"
+                Extract: "true"
+              InputArtifacts:
+                - Name: WebsiteArtifact
+              RunOrder: 1
+      Tags:
+        - Key: Purpose
+          Value: student-devops-pipeline
 
 Outputs:
-  DemoUrl:
-    Description: Public HTTPS URL for the live demo.
+  WebsiteUrl:
+    Description: Open after the first successful pipeline execution.
     Value: !Sub "https://${DemoDistribution.DomainName}"
-  DemoBucketName:
-    Description: Private S3 deployment bucket.
-    Value: !Ref DemoBucket
-  CloudFrontDistributionId:
-    Description: Distribution ID used for cache invalidation.
-    Value: !Ref DemoDistribution
-  GitHubDeploymentRoleArn:
-    Description: IAM role assumed by GitHub Actions using OIDC.
-    Value: !GetAtt GitHubDeploymentRole.Arn
-  CreatedGitHubOidcProvider:
-    Description: Whether this stack created the account-level GitHub OIDC provider.
-    Value: !If [CreateGitHubOidcProvider, "true", "false"]
+  PipelineName:
+    Description: CodePipeline created by the stack.
+    Value: !Ref WebsitePipeline
+  PipelineConsoleUrl:
+    Description: Open the visual Source, Check, and Deploy stages.
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/codesuite/codepipeline/pipelines/${WebsitePipeline}/view?region=${AWS::Region}"
+  ConnectionArn:
+    Description: Connection starts PENDING; complete its GitHub authorization in the console.
+    Value: !GetAtt GitHubConnection.ConnectionArn
+  ConnectionSetupUrl:
+    Description: Choose the pending connection and then Update pending connection.
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/codesuite/settings/connections?region=${AWS::Region}"
+  WebsiteBucketName:
+    Description: Private bucket that contains only the deployed website files.
+    Value: !Ref WebsiteBucket
+  ArtifactBucketName:
+    Description: Private bucket used by CodePipeline for source and build artifacts.
+    Value: !Ref ArtifactBucket

@@ -1,3 +1,10 @@
-import { mkdir } from "node:fs/promises";
+import { cp, mkdir } from "node:fs/promises";
 
-await mkdir(new URL("../dist/", import.meta.url), { recursive: true });
+const distDirectory = new URL("../dist/", import.meta.url);
+
+await mkdir(distDirectory, { recursive: true });
+await cp(
+  new URL("../slides/assets/", import.meta.url),
+  new URL("assets/", distDirectory),
+  { recursive: true, force: true }
+);

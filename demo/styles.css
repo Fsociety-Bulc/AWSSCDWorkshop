@@ -22,10 +22,10 @@ body {
 
 .shell {
   width: min(1120px, 92vw);
-  min-height: min(680px, 90vh);
+  min-height: min(560px, 90vh);
   display: flex;
   flex-direction: column;
-  padding: clamp(24px, 5vw, 64px);
+  padding: clamp(18px, 3vw, 36px);
   border: 1px solid #26364b;
   border-radius: 28px;
   background: linear-gradient(145deg, rgb(16 28 45 / 94%), rgb(7 17 31 / 96%));
@@ -60,16 +60,16 @@ nav, footer, .pipeline {
 
 h1 {
   max-width: 900px;
-  margin: 14px 0 18px;
-  font-size: clamp(56px, 10vw, 124px);
-  line-height: 0.92;
+  margin: 10px 0 12px;
+  font-size: clamp(44px, 7vw, 82px);
+  line-height: 0.9;
   letter-spacing: -0.055em;
 }
 
 .subhead {
   max-width: 720px;
   color: var(--muted);
-  font-size: clamp(18px, 2.2vw, 27px);
+  font-size: clamp(17px, 1.8vw, 23px);
   line-height: 1.45;
 }
 
@@ -77,8 +77,8 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 16px;
-  margin-top: 24px;
-  padding: 14px 18px;
+  margin-top: 12px;
+  padding: 9px 14px;
   border-left: 5px solid var(--accent);
   background: rgb(255 255 255 / 5%);
 }
@@ -87,7 +87,7 @@ h1 {
 
 .pipeline {
   justify-content: flex-start;
-  margin: 36px 0;
+  margin: 16px 0;
   color: var(--text);
 }
 
@@ -98,7 +98,7 @@ h1 {
 }
 
 footer {
-  padding-top: 18px;
+  padding-top: 8px;
   border-top: 1px solid #26364b;
   letter-spacing: 0;
 }

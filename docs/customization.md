@@ -2,43 +2,74 @@
 
 ## Speaker and event details
 
-Edit the first and final slides in `slides/deck.md`. Replace `FarhanAshrafDev` if you want your full display name, job title, company, or social handle shown.
+Edit the cover and final slide in `slides/deck.md`. Replace `FarhanAshrafDev` if you want a full display name, title, company, or social handle.
 
 ## Repository URL and QR code
 
-The default URL is `https://github.com/FarhanAshrafDev/devops-on-aws-community-day`. To use another URL:
+The default QR points to the public beginner CodePipeline branch. Override it when copying the kit:
 
 ```bash
 REPO_URL="https://github.com/OWNER/REPO" npm run qr
 ```
 
-Then rebuild the deck.
+Then rebuild all deck formats.
+
+## One-stack setup
+
+The README CloudShell command includes five defaults:
+
+- Public raw URL for `infra/template.yaml`
+- GitHub owner
+- GitHub repository
+- GitHub branch
+- Connection name
+
+If you move the kit, update the download URL and parameter values in that command. CloudFormation quick-create does **not** accept a raw GitHub URL as `templateURL`; a literal Launch Stack button requires publishing the template to an S3 HTTPS URL first.
+
+`ConnectionName` must be unique in the selected AWS account. Change it if that account already contains `student-devops-github`.
+
+## Live website values
+
+The safest stage edit is the release object at the top of `demo/app.js`:
+
+```js
+const release = {
+  version: "v2.0",
+  message: "My first automated AWS deployment!",
+  accent: "#38bdf8"
+};
+```
+
+Keep the edit obvious and avoid changing pipeline or IAM code live.
 
 ## Display geometry
 
-The venue specification is defined in `slides/theme.css`:
+The venue canvas is defined in `slides/theme.css`:
 
 ```css
 /* @size smd 768px 896px */
 ```
 
-Keep critical text at least 45 pixels from each edge. The current theme uses larger safe margins. If the hardware rotates or scales the signal, confirm orientation at the venue before changing the deck.
+Keep critical text at least 45 pixels from every edge. Confirm physical orientation and scaling at the venue before redesigning the deck.
 
 ## Session duration
 
-The current notes target 45 minutes. For 30 minutes:
+The notes target 45 minutes.
 
-- Skip slides 6, 9, and 16.
+For 30 minutes:
+
+- Skip slides 6, 8, 10, and 18.
 - Reduce the demo to 6 minutes.
 - Use a 2-minute Q&A.
 
 For 60 minutes:
 
-- Add a short workflow YAML walkthrough after the demo.
-- Show the CloudFormation trust policy.
-- Demonstrate a failed validation or rollback.
+- Open `buildspec.yml` after the demo.
+- Show a deliberate failed JavaScript syntax check.
+- Compare the CloudFormation template with the created Resources tab.
+- Demonstrate a Git revert through the same pipeline.
 - Keep at least 8 minutes for questions.
 
 ## Demo target
 
-The sample uses a static site because it is visual, inexpensive, and understandable to cloud beginners. The same source/build/check/deploy/observe story can later target Lambda, ECS, EKS, or EC2 without changing the core teaching narrative.
+The sample is static because it is visual, inexpensive, and understandable without a programming framework. Later projects can target Lambda, ECS, or EC2 while retaining the same source, build, check, deploy, observe, and Infrastructure-as-Code concepts.
