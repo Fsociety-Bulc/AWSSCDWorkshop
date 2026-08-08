@@ -10,7 +10,17 @@ A beginner-friendly live demo showing one pull-request merge become a deployed w
 4. CodePipeline runs **Source → Check → Deploy**.
 5. Refresh the CloudFront URL and reveal the new website.
 
-## Deploy the workshop
+## One-click Launch Stack
+
+CloudFormation quick-create requires the template to be hosted in Amazon S3. The organizer runs this once in AWS CloudShell:
+
+```bash
+AWS_REGION=us-east-1 bash scripts/publish-launch-template.sh
+```
+
+The script validates and publishes the template, then prints a ready-to-share **Launch Stack** URL and Markdown button. See [`docs/one-click-deployment.md`](docs/one-click-deployment.md). Stack creation still requires review plus the one-time GitHub authorization handshake.
+
+## Direct CloudShell deployment
 
 Use AWS CloudShell in `us-east-1`:
 
