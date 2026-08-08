@@ -340,7 +340,7 @@ Resources:
               Configuration:
                 BranchName: !Ref GitHubBranch
                 ConnectionArn: !GetAtt GitHubConnection.ConnectionArn
-                DetectChanges: "true"
+                DetectChanges: "false"
                 FullRepositoryId: !Sub "${GitHubOwner}/${GitHubRepo}"
                 OutputArtifactFormat: CODE_ZIP
               OutputArtifacts:
